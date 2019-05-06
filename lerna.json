@@ -1,0 +1,15 @@
+{
+	"packages": [
+		"packages/*"
+	],
+	"command": {
+		"publish": {
+			"ignoreChanges": [ "*.md" ]
+		},
+		"bootstrap": {
+			"npmClientArgs": ["--no-package-lock"]
+		}
+	},
+	"version": "independent",
+	"registry": "http://39.105.4.131:8080/"
+}
