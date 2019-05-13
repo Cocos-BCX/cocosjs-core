@@ -62,6 +62,12 @@ export default class Desktop extends Plugin {
 				type: 'getVersion',
 				payload: {}
 			}),
+			[WALLET_METHODS.getAccountInfo]: (account_name) => SocketService.sendApiRequest({
+				type: 'getVersion',
+				payload: {
+					account_name
+				}
+			}),
 			[WALLET_METHODS.getIdentity]: (requiredFields) => SocketService.sendApiRequest({
 				type: 'getOrRequestIdentity',
 				payload: {

@@ -55,7 +55,7 @@ export default class WalletInterface {
 
 		context.account = (blockchain) => {
 			if (!context.identity) return;
-			return context.identity.accounts
+			return context.identity
 		}
 
 	}

@@ -59,7 +59,7 @@ export default class CocosBcx extends Plugin {
             }),
             [WALLET_METHODS.callContractFunction]: (args) => socketService.sendApiRequest({
                 type: 'callContractFunction',
-                payload: args.payload
+                payload: args
             })
         }
     }
