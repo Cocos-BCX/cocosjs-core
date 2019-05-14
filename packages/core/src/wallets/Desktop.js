@@ -40,13 +40,13 @@ export default class Desktop extends Plugin {
 
 	async runAfterInterfacing() {
 		this.holderFns.get().addEventHandler((t, x) => this.eventHandler(t, x), 'internal');
-		this.holderFns.get().identity = await this.holderFns.get().getIdentityFromPermissions();
+		this.holderFns.get().account_name = await this.holderFns.get().getIdentityFromPermissions();
 		return true;
 	}
 
 	methods() {
 		const setAndReturnId = (id, forget) => {
-			if (id || forget) this.holderFns.get().identity = id;
+			if (id || forget) this.holderFns.get().account_name = id;
 			// if(forget) SocketService.removeAppKeys();
 			return forget || id;
 		};
@@ -69,6 +69,10 @@ export default class Desktop extends Plugin {
 						accounts: [this.holderFns.get().network]
 					}
 				}
+			}).then(setAndReturnId),
+			[WALLET_METHODS.getAccountInfo]: () => SocketService.sendApiRequest({
+				type: 'getAccountInfo',
+				payload: {}
 			}).then(setAndReturnId),
 			[WALLET_METHODS.getIdentityFromPermissions]: () => SocketService.sendApiRequest({
 				type: 'identityFromPermissions',
@@ -181,10 +185,10 @@ export default class Desktop extends Plugin {
 	async eventHandler(event, payload) {
 		switch (event) {
 			case EVENTS.Disconnected:
-				this.holderFns.get().identity = null;
+				this.holderFns.get().account_name = null;
 				break;
 			case EVENTS.LoggedOut:
-				this.holderFns.get().identity = await this.holderFns.get().getIdentityFromPermissions();
+				this.holderFns.get().account_name = await this.holderFns.get().getIdentityFromPermissions();
 				break;
 		}
 	}

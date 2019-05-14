@@ -22,6 +22,7 @@ export const WALLET_METHODS = {
 	createTransaction: 'createTransaction',
 	addToken: 'addToken',
 	transferAsset: 'transferAsset',
+	getAccountInfo: 'getAccountInfo',
 	callContractFunction: 'callContractFunction'
 };
 
@@ -54,8 +55,8 @@ export default class WalletInterface {
 	static bindBasics(context) {
 
 		context.account = (blockchain) => {
-			if (!context.identity) return;
-			return context.identity.accounts
+			if (!context.account_name) return;
+			return context.account_name
 		}
 
 	}

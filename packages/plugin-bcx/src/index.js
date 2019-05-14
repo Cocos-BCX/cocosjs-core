@@ -40,6 +40,9 @@ export default class CocosBcx extends Plugin {
                         if (method === WALLET_METHODS.callContractFunction) {
                             return CocosBcx.methods()[WALLET_METHODS.callContractFunction](args[0])
                         }
+                        if (method === WALLET_METHODS.getAccountInfo) {
+                            return CocosBcx.methods()[WALLET_METHODS.getAccountInfo](args[0])
+                        }
 
                         return instance[method](...args)
 
@@ -60,7 +63,11 @@ export default class CocosBcx extends Plugin {
             [WALLET_METHODS.callContractFunction]: (args) => socketService.sendApiRequest({
                 type: 'callContractFunction',
                 payload: args.payload
-            })
+            }),
+            [WALLET_METHODS.callContractFunction]: (args) => socketService.sendApiRequest({
+                type: 'getAccountInfo',
+                payload: args.payload
+            }),
         }
     }
 }
