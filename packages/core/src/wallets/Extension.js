@@ -7,7 +7,7 @@ import {WALLET_METHODS} from "../models/WalletInterface";
 let isAvailable = false;
 const getIsAvailable = () => {
 	if(typeof window !== 'undefined' && typeof document !== 'undefined') {
-		if(typeof window.BcxWeb !== 'undefined' && typeof window.BcxWeb.BCX !== 'undefined') isAvailable = true;
+		if((typeof window.BcxWeb !== 'undefined' && typeof window.BcxWeb.BCX !== 'undefined') || (typeof window.BcxWeb !== 'undefined' && typeof window.BcxWeb.getAccountInfo() !== 'undefined')) isAvailable = true;
 		else document.addEventListener('cocosLoaded', () => isAvailable = true);
 	}
 }
@@ -47,7 +47,8 @@ export default class Extension extends Plugin {
 		if(this.holderFns.get().wallet === this.name){
 			window.BcxWeb.wallet = this.name;
 			cocos = this.holderFns.get()
-			cocos.cocosBcx = () => window.BcxWeb.BCX;
+			if (typeof window.BcxWeb !== 'undefined' && typeof window.BcxWeb.BCX !== 'undefined') cocos.cocosBcx = () => window.BcxWeb.BCX;
+			else if (typeof window.BcxWeb !== 'undefined' && typeof window.BcxWeb.getAccountInfo() !== 'undefined') cocos.cocosBcx = () => window.BcxWeb;
 		}
 
 		this.holderFns.set(cocos);
