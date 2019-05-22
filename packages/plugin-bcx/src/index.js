@@ -5,7 +5,7 @@ import {
     Blockchains,
     PluginTypes
 } from 'cocosjs-core';
-import Cocosjs from 'cocosjs-core';
+import Cocosjs from 'cocosjs-core'
 const proxy = (dummy, handler) => new Proxy(dummy, handler);
 
 let socketService = SocketService;
@@ -26,23 +26,36 @@ export default class CocosBcx extends Plugin {
     signatureProvider(...args) {
         const throwIfNoIdentity = args[0];
         return (_bcx) => {
-            // throwIfNoIdentity()
-
+            // throwIfNoIdentity(
             return proxy(_bcx, {
                 get(instance, method) {
-
                     if (typeof instance[method] === 'function') return (...args) => {
                         if (Cocosjs.cocos.isExtension) return instance[method](...args)
-
                         if (method === WALLET_METHODS.transferAsset) {
-                            return CocosBcx.methods()[WALLET_METHODS.transferAsset](args[0])
+                            // return new Promise(resolve => {
+                            //     resolve(CocosBcx.methods()[WALLET_METHODS.transferAsset](...args))
+                            // })
+                            return new Promise((resolve, reject) => {
+                                CocosBcx.methods()[WALLET_METHODS.transferAsset](...args).then(res => {
+                                    return resolve(res)
+                                }).catch(err => {
+                                    return reject(err)
+                                })
+                            })
                         }
                         if (method === WALLET_METHODS.callContractFunction) {
-                            return CocosBcx.methods()[WALLET_METHODS.callContractFunction](args[0])
+                            // return new Promise(resolve => {
+                            //     resolve(CocosBcx.methods()[WALLET_METHODS.callContractFunction](...args))
+                            // })
+                            return new Promise((resolve, reject) => {
+                                CocosBcx.methods()[WALLET_METHODS.callContractFunction](...args).then(res => {
+                                    return resolve(res)
+                                }).catch(err => {
+                                    return reject(err)
+                                })
+                            })
                         }
-
                         return instance[method](...args)
-
                     };
                     else return instance[method];
 
@@ -55,11 +68,11 @@ export default class CocosBcx extends Plugin {
         return {
             [WALLET_METHODS.transferAsset]: (args) => socketService.sendApiRequest({
                 type: 'requestTransfer',
-                payload: args.payload
+                payload: args
             }),
             [WALLET_METHODS.callContractFunction]: (args) => socketService.sendApiRequest({
                 type: 'callContractFunction',
-                payload: args.payload
+                payload: args
             })
         }
     }

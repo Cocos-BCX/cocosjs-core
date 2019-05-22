@@ -27,65 +27,64 @@ const random = () => {
 
 const getOrigin = () => {
     let origin;
-    if(typeof location !== 'undefined')
-        if(location.hasOwnProperty('hostname') && location.hostname.length && location.hostname !== 'localhost')
+    if (typeof location !== 'undefined')
+        if (location.hasOwnProperty('hostname') && location.hostname.length && location.hostname !== 'localhost')
             origin = location.hostname;
         else origin = plugin;
     else origin = plugin;
-    if(origin.substr(0, 4) === 'www.') origin = origin.replace('www.','');
+    if (origin.substr(0, 4) === 'www.') origin = origin.replace('www.', '');
     return origin;
 }
 
 let appkey = StorageService.getAppKey();
-if(!appkey) appkey = 'appkey:'+random();
+if (!appkey) appkey = 'appkey:' + random();
 
 const send = (type = null, data = null) => {
-    // console.log("66666666666666666666666666666666--" + type )
-    // console.log(data)
-    // console.log("66666666666666666666666666666666--end")
-    if(type === null && data === null) socket.send('40/Cocos-BCX');
+    if (type === null && data === null) socket.send('40/Cocos-BCX');
     else socket.send('42/Cocos-BCX,' + JSON.stringify([type, data]));
 }
 
 let pairingPromise = null;
 const pair = (passthrough = false) => {
     return new Promise((resolve, reject) => {
-        pairingPromise = {resolve, reject};
-        send('pair', {data:{ appkey, origin:getOrigin(), passthrough }, plugin})
+        pairingPromise = {
+            resolve,
+            reject
+        };
+        send('pair', {
+            data: {
+                appkey,
+                origin: getOrigin(),
+                passthrough
+            },
+            plugin
+        })
     })
 };
-
 let eventHandlers = {};
-
 export default class SocketService {
-
-    static init(_plugin, timeout = 600000){
+    static init(_plugin, timeout = 600000) {
         plugin = _plugin;
         this.timeout = timeout;
     }
-
-    static getOrigin(){
+    static getOrigin() {
         return getOrigin();
     }
-
-    static addEventHandler(handler, key){
-        if(!key) key = 'app';
-	    eventHandlers[key] = handler;
+    static addEventHandler(handler, key) {
+        if (!key) key = 'app';
+        eventHandlers[key] = handler;
     }
-
-    static removeEventHandler(key){
-	    if(!key) key = 'app';
-	    delete eventHandlers[key];
+    static removeEventHandler(key) {
+        if (!key) key = 'app';
+        delete eventHandlers[key];
     }
-
-    static link(){
-
+    static link() {
         return Promise.race([
             new Promise((resolve, reject) => setTimeout(() => {
-                if(connected) return;
+                if (connected) return;
                 resolve(false);
 
-                if(socket) {
+                if (socket) {
                     socket.disconnect();
                     socket = null;
                 }
@@ -93,29 +92,22 @@ export default class SocketService {
             new Promise(async (resolve, reject) => {
                 const setupSocket = () => {
                     socket.onmessage = msg => {
-                        // Handshaking/Upgrading
-                        if(msg.data.indexOf('42/Cocos-BCX') === -1) return false;
-
-                        // Real message
+                        if (msg.data.indexOf('42/Cocos-BCX') === -1) return false;
                         const [type, data] = JSON.parse(msg.data.replace('42/Cocos-BCX,', ''));
-
-                        // console.log("77777777777777777777777777777777--" + type )
-                        // console.log(data )
-                        // console.log("77777777777777777777777777777777--end")
-
-                        switch(type){
-                            case 'paired': return msg_paired(data);
-                            case 'rekey': return msg_rekey();
-                            case 'api': return msg_api(data);
-                            case 'event': return event_api(data);
+                        switch (type) {
+                            case 'paired':
+                                return msg_paired(data);
+                            case 'rekey':
+                                return msg_rekey();
+                            case 'api':
+                                return msg_api(data);
+                            case 'event':
+                                return event_api(data);
                         }
                     };
-
-
                     const msg_paired = result => {
                         paired = result;
-
-                        if(paired) {
+                        if (paired) {
                             const savedKey = StorageService.getAppKey();
                             const hashed = appkey.indexOf('appkey:') > -1 ? sha256(appkey) : appkey;
 
@@ -124,53 +116,51 @@ export default class SocketService {
                                 appkey = StorageService.getAppKey();
                             }
                         }
-
                         pairingPromise.resolve(result);
                     };
-
                     const msg_rekey = () => {
-                        appkey = 'appkey:'+random();
-                        send('rekeyed', {data:{ appkey, origin:getOrigin() }, plugin});
+                        appkey = 'appkey:' + random();
+                        send('rekeyed', {
+                            data: {
+                                appkey,
+                                origin: getOrigin()
+                            },
+                            plugin
+                        });
                     };
-
                     const msg_api = response => {
-                        if(!response) return
+                        if (!response) return
                         const openRequest = openRequests.find(x => x.id === response.id);
-                        if(!openRequest) return;
-
+                        if (!openRequest) return
                         openRequests = openRequests.filter(x => x.id !== response.id);
-
-                        const isErrorResponse = typeof response.result === 'object'
-                            && response.result !== null
-                            && response.result.hasOwnProperty('isError');
-
-                        if(isErrorResponse) openRequest.reject(response.result);
+                        const isErrorResponse = typeof response.result === 'object' &&
+                            response.result !== null &&
+                            response.result.hasOwnProperty('isError');
+                        if (isErrorResponse) openRequest.reject(response.result);
                         else openRequest.resolve(response.result);
                     };
-
-                    const event_api = ({event, payload}) => {
-						if(Object.keys(eventHandlers).length) Object.keys(eventHandlers).map(key => {
-							eventHandlers[key](event, payload);
-						});
+                    const event_api = ({
+                        event,
+                        payload
+                    }) => {
+                        if (Object.keys(eventHandlers).length) Object.keys(eventHandlers).map(key => {
+                            eventHandlers[key](event, payload);
+                        });
                     };
                 };
-
-                const trySocket = ( resolver = null) => {
+                const trySocket = (resolver = null) => {
                     let promise;
-                    if(!resolver) promise = new Promise(r => resolver = r);
+                    if (!resolver) promise = new Promise(r => resolver = r);
                     const hostname = '127.0.0.1:50005';
                     const protocol = 'ws://';
                     const host = `${protocol}${hostname}${suffix}`;
                     const s = new WebSocket(host);
-
                     s.onerror = err => {
                         resolve(false);
                         resolver(false);
                     };
-
                     s.onopen = () => {
                         socket = s;
-
                         send();
                         clearTimeout(reconnectionTimeout);
                         connected = true;
@@ -180,59 +170,54 @@ export default class SocketService {
                         });
                         setupSocket();
                     };
-
                     return promise;
                 };
                 await trySocket();
-
             })
         ])
     }
-
-    static isConnected(){
+    static isConnected() {
         return connected;
     }
-
-    static isPaired(){
+    static isPaired() {
         return paired;
     }
-
-    static disconnect(){
-        if(socket) socket.close();
+    static disconnect() {
+        if (socket) socket.close();
         return true;
     }
-
-    static removeAppKeys(){
-	    StorageService.removeAppKey();
-	    StorageService.removeNonce();
+    static removeAppKeys() {
+        StorageService.removeAppKey();
+        StorageService.removeNonce();
     }
-
-    static sendApiRequest(request){
+    static sendApiRequest(request) {
         return new Promise((resolve, reject) => {
-            if(request.type === 'identityFromPermissions' && !paired) return resolve(false);
-
+            if (request.type === 'identityFromPermissions' && !paired) return resolve(false)
             pair().then(() => {
-                if(!paired) return reject({code:'not_paired', message:'The user did not allow this app to connect to their Cocos'});
-
+                if (!paired) return reject({
+                    code: 'not_paired',
+                    message: 'The user did not allow this app to connect to their Cocos'
+                });
                 // Request ID used for resolving promises
-                request.id = random();
-
+                request.id = random()
                 // Set Application Key
                 request.appkey = appkey;
-
                 // Nonce used to authenticate this request
                 request.nonce = StorageService.getNonce() || 0;
                 // Next nonce used to authenticate the next request
                 const nextNonce = random();
                 request.nextNonce = sha256(nextNonce);
                 StorageService.setNonce(nextNonce);
-
-                if(request.hasOwnProperty('payload') && !request.payload.hasOwnProperty('origin'))
+                if (request.hasOwnProperty('payload') && !request.payload.hasOwnProperty('origin'))
                     request.payload.origin = getOrigin();
-
-
-                openRequests.push(Object.assign(request, {resolve, reject}));
-                send('api', {data:request, plugin})
+                openRequests.push(Object.assign(request, {
+                    resolve,
+                    reject
+                }));
+                send('api', {
+                    data: request,
+                    plugin
+                })
             })
         });
     }

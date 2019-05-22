@@ -54,8 +54,8 @@ export default class WalletInterface {
 	static bindBasics(context) {
 
 		context.account = (blockchain) => {
-			if (!context.identity) return;
-			return context.identity.accounts
+			if (!context.account_name) return;
+			return context.account_name
 		}
 
 	}
