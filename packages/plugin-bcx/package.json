@@ -1,6 +1,18 @@
 {
-	"name": "cocosjs-plugin-bcx",
-	"version": "0.1.25",
-	"main": "dist/index.js",
-	"license": "MIT"
+  "name": "cocosjs-plugin-bcx",
+  "version": "0.1.28",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.0.6",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack-cli": "^3.3.2"
+  },
+  "dependencies": {
+    "save": "^2.4.0",
+    "webpack": "^4.32.2"
+  }
 }
