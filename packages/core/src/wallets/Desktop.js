@@ -155,6 +155,12 @@ export default class Desktop extends Plugin {
 					onlyGetFee,
 				}
 			}),
+			[WALLET_METHODS.getAccountInfo]: (network) => SocketService.sendApiRequest({
+				type: 'getAccountInfo',
+				payload: {
+					network: network || this.holderFns.get().network
+				}
+			}),
 			[WALLET_METHODS.requestSignature]: (payload) => SocketService.sendApiRequest({
 				type: 'requestSignature',
 				payload

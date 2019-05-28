@@ -6,33 +6,26 @@ import * as PluginTypes from './PluginTypes';
  */
 
 class PluginRepositorySingleton {
-
-    constructor(){
+    constructor() {
         this.plugins = [];
     }
-
-    loadPlugin(plugin){
-		if(!this.plugin(plugin.name))
-			this.plugins.push(plugin);
-	}
-
-    wallets(){
+    loadPlugin(plugin) {
+        if (!this.plugin(plugin.name))
+            this.plugins.push(plugin);
+    }
+    wallets() {
         return this.plugins.filter(plugin => plugin.type === PluginTypes.WALLET_SUPPORT);
     }
-
-    signatureProviders(){
+    signatureProviders() {
         return this.plugins.filter(plugin => plugin.type === PluginTypes.BLOCKCHAIN_SUPPORT);
     }
-
-    supportedBlockchains(){
+    supportedBlockchains() {
         return this.signatureProviders().map(plugin => name)
     }
-
-    plugin(name){
+    plugin(name) {
         return this.plugins.find(plugin => plugin.name === name);
     }
-
-    async endorsedNetworks(){
+    async endorsedNetworks() {
         return await Promise.all(this.signatureProviders().map(async plugin => await plugin.getEndorsedNetwork()));
     }
 }

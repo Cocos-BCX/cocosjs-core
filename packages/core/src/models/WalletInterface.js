@@ -5,7 +5,7 @@ export const WALLET_METHODS = {
 	addEventHandler: 'addEventHandler',
 	removeEventHandler: 'removeEventHandler',
 	listen: 'listen',
-
+	getAccountInfo: 'getAccountInfo',
 	getVersion: 'getVersion',
 	getIdentity: 'getIdentity',
 	getIdentityFromPermissions: 'getIdentityFromPermissions',
