@@ -1,12 +1,14 @@
 {
   "name": "cocosjs-core",
-  "version": "0.1.28",
+  "version": "0.1.31",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "start": "webpack --config webpack.config.js"
   },
   "dependencies": {
+    "babel-loader": "^8.0.6",
+    "babel-preset-es2015": "^6.24.1",
     "create-hash": "^1.2.0",
     "es6-promise": "^4.2.4",
     "get-random-values": "^1.2.0",
