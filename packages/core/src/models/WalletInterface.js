@@ -5,7 +5,7 @@ export const WALLET_METHODS = {
 	addEventHandler: 'addEventHandler',
 	removeEventHandler: 'removeEventHandler',
 	listen: 'listen',
-
+	getAccountInfo: 'getAccountInfo',
 	getVersion: 'getVersion',
 	getIdentity: 'getIdentity',
 	getIdentityFromPermissions: 'getIdentityFromPermissions',
@@ -54,8 +54,8 @@ export default class WalletInterface {
 	static bindBasics(context) {
 
 		context.account = (blockchain) => {
-			if (!context.identity) return;
-			return context.identity
+			if (!context.account_name) return;
+			return context.account_name
 		}
 
 	}
