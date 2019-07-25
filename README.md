@@ -5,4 +5,6 @@ Use it to hook up with various clients, including chrome plugins, wallet clients
 
 ## How to use
 
-click https://www.npmjs.com/package/cocosjs-core
+npm i cocosjs-core
+
+more information, visit https://www.npmjs.com/package/cocosjs-core
