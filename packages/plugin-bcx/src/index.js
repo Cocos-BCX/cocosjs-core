@@ -59,6 +59,7 @@ export default class CocosBcx extends Plugin {
         }
       });
     }
+
   }
   static methods() {
     return {
