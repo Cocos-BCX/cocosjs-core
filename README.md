@@ -3,10 +3,10 @@
 It is used for dapp.
 Use it to hook up with various clients, including chrome plugins, wallet clients, IOS wallets, Android wallets.
 
-### Hook up with wallet client
+#### Hook up with wallet client
 The websocket service handles opening and closing the WS server as well as pointing messages to the wallet client.
 
-### Hook up with chrome plugins, IOS wallets, Android wallets
+#### Hook up with chrome plugins, IOS wallets, Android wallets
 It communicates with chrome plugins through the chrome browser mechanism; the IOS wallets, Android wallets are similar.
 
 ## How to use
