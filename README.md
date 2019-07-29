@@ -8,7 +8,7 @@ Use it to hook up with various clients, including chrome plugins, wallet clients
 npm i cocosjs-core
 
 ```
-import Cocosjs from "cocosjs-core";
+ import Cocosjs from "cocosjs-core";
  import CocosBCX from "cocosjs-plugin-bcx";
  Cocosjs.plugins(new CocosBCX())
  Cocosjs.cocos.connect("My-App").then(connected => {
