@@ -8,3 +8,7 @@ Use it to hook up with various clients, including chrome plugins, wallet clients
 npm i cocosjs-core
 
 more information, visit https://www.npmjs.com/package/cocosjs-core
+
+## Using it on DApp
+
+Here is a dapp sample. [cocos-dice](https://github.com/Cocos-BCX/cocos-dice) 
